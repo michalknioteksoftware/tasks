@@ -1,0 +1,34 @@
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> phpunit ###
+.phpunit.cache
+/var/coverage/
+###< phpunit ###
+
+###> composer ###
+composer.phar
+###< composer ###
+
+###> ide ###
+.idea/
+.vscode/
+*.swp
+*.swo
+###< ide ###
+
+###> docker ###
+.env.docker.local
+###< docker ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###

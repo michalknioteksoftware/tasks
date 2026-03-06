@@ -1,0 +1,7 @@
+# Enforce LF line endings for scripts (fixes Docker "No such file or directory" on Windows)
+* text=auto
+*.php text eol=lf
+*.sh text eol=lf
+bin/* text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf

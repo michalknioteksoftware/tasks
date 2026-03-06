@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Welcome</h1>
+        <p>This is the frontend web part of the application.</p>
+        <p>API is available at <a href="{{ path('api_health') }}">/api/health</a></p>
+    </div>
+{% endblock %}
