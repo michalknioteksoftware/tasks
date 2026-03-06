@@ -1,4 +1,7 @@
 parameters:
+    # Override in production via PASSWORD_SALT env var
+    password_salt: '%env(default:app_password_salt:PASSWORD_SALT)%'
+    app_password_salt: 'xK9#mP2$vL7@nQ4!wR8&jF3'
 
 services:
     _defaults:
