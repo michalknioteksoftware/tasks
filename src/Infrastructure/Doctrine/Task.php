@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Doctrine;
 
+use App\Domain\Task\TaskStatus;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
@@ -21,8 +22,8 @@ class Task
     #[ORM\Column(length: 255)]
     private string $description;
 
-    #[ORM\Column(length: 20)]
-    private string $status;
+    #[ORM\Column(length: 20, enumType: TaskStatus::class)]
+    private TaskStatus $status;
 
     #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
@@ -63,12 +64,12 @@ class Task
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): TaskStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(TaskStatus $status): static
     {
         $this->status = $status;
 
