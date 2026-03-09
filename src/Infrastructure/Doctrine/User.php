@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Infrastructure\Doctrine;
 
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -77,6 +76,7 @@ class User
     public function setName(string $name): static
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -88,6 +88,7 @@ class User
     public function setUsername(string $username): static
     {
         $this->username = $username;
+
         return $this;
     }
 
@@ -99,6 +100,7 @@ class User
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -110,6 +112,7 @@ class User
     public function setAddressStreet(?string $addressStreet): static
     {
         $this->addressStreet = $addressStreet;
+
         return $this;
     }
 
@@ -121,6 +124,7 @@ class User
     public function setAddressSuite(?string $addressSuite): static
     {
         $this->addressSuite = $addressSuite;
+
         return $this;
     }
 
@@ -132,6 +136,7 @@ class User
     public function setAddressCity(?string $addressCity): static
     {
         $this->addressCity = $addressCity;
+
         return $this;
     }
 
@@ -143,6 +148,7 @@ class User
     public function setAddressZipcode(?string $addressZipcode): static
     {
         $this->addressZipcode = $addressZipcode;
+
         return $this;
     }
 
@@ -154,6 +160,7 @@ class User
     public function setAddressGeoLat(?string $addressGeoLat): static
     {
         $this->addressGeoLat = $addressGeoLat;
+
         return $this;
     }
 
@@ -165,6 +172,7 @@ class User
     public function setAddressGeoLng(?string $addressGeoLng): static
     {
         $this->addressGeoLng = $addressGeoLng;
+
         return $this;
     }
 
@@ -176,6 +184,7 @@ class User
     public function setPhone(?string $phone): static
     {
         $this->phone = $phone;
+
         return $this;
     }
 
@@ -187,6 +196,7 @@ class User
     public function setWebsite(?string $website): static
     {
         $this->website = $website;
+
         return $this;
     }
 
@@ -198,6 +208,7 @@ class User
     public function setCompanyName(?string $companyName): static
     {
         $this->companyName = $companyName;
+
         return $this;
     }
 
@@ -209,6 +220,7 @@ class User
     public function setCompanyCatchPhrase(?string $companyCatchPhrase): static
     {
         $this->companyCatchPhrase = $companyCatchPhrase;
+
         return $this;
     }
 
@@ -220,6 +232,7 @@ class User
     public function setCompanyBs(?string $companyBs): static
     {
         $this->companyBs = $companyBs;
+
         return $this;
     }
 
@@ -231,6 +244,7 @@ class User
     public function setIsAdmin(bool $isAdmin): static
     {
         $this->isAdmin = $isAdmin;
+
         return $this;
     }
 
@@ -242,6 +256,8 @@ class User
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
         return $this;
     }
 }
+

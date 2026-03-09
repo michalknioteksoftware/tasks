@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Web;
+namespace App\Infrastructure\Controller\Web;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,3 +16,4 @@ class HomeController extends AbstractController
         return $this->render('web/home.html.twig');
     }
 }
+

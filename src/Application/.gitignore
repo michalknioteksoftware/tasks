@@ -1,0 +1,4 @@
+# Keep the Application layer directory in version control
+*
+!.gitignore
+
