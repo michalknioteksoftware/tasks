@@ -12,6 +12,8 @@ services:
       - tasks_network
     depends_on:
       - db
+      - rabbitmq
+      - redis
 
   nginx:
     image: nginx:alpine
@@ -42,6 +44,62 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - tasks_network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: tasks_rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-tasks}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-tasks_secret}
+    networks:
+      - tasks_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: tasks_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - tasks_network
+
+  messenger_amqp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tasks_messenger_amqp
+    restart: unless-stopped
+    working_dir: /var/www
+    command: ["php", "bin/console", "messenger:consume", "async_amqp", "-vv"]
+    volumes:
+      - .:/var/www
+    networks:
+      - tasks_network
+    depends_on:
+      - php
+      - rabbitmq
+      - db
+
+  messenger_redis:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tasks_messenger_redis
+    restart: unless-stopped
+    working_dir: /var/www
+    command: ["php", "bin/console", "messenger:consume", "async_redis", "-vv"]
+    volumes:
+      - .:/var/www
+    networks:
+      - tasks_network
+    depends_on:
+      - php
+      - redis
+      - db
 
 networks:
   tasks_network:

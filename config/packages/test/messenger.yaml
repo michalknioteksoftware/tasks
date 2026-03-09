@@ -1,0 +1,6 @@
+framework:
+    messenger:
+        transports:
+            async_amqp: 'sync://'
+            async_redis: 'sync://'
+            failed: 'sync://'

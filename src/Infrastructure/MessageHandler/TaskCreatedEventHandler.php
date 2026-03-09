@@ -2,24 +2,29 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\EventListener;
+namespace App\Infrastructure\MessageHandler;
 
 use App\Application\Task\Event\TaskCreatedEvent;
 use App\Infrastructure\Doctrine\TaskHistory;
+use App\Infrastructure\Doctrine\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsEventListener(event: TaskCreatedEvent::class)]
-final class TaskCreatedEventListener
+#[AsMessageHandler]
+final class TaskCreatedEventHandler
 {
     public function __construct(
+        private readonly TaskRepository $taskRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
     public function __invoke(TaskCreatedEvent $event): void
     {
-        $task = $event->getTask();
+        $task = $this->taskRepository->find($event->getTaskId());
+        if ($task === null) {
+            return;
+        }
 
         $history = new TaskHistory();
         $history->setTask($task);

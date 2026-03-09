@@ -7,7 +7,9 @@ RUN apk add --no-cache \
     libpq-dev \
     icu-dev \
     libxml2-dev \
-    oniguruma-dev
+    oniguruma-dev \
+    $PHPIZE_DEPS \
+    rabbitmq-c-dev
 
 # Install PHP extensions
 RUN docker-php-ext-install \
@@ -17,6 +19,9 @@ RUN docker-php-ext-install \
     opcache \
     xml \
     mbstring
+
+RUN pecl install amqp && docker-php-ext-enable amqp \
+    && pecl install redis && docker-php-ext-enable redis
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

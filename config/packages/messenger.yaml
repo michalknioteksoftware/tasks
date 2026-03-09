@@ -1,0 +1,19 @@
+framework:
+    messenger:
+        failure_transport: failed
+
+        transports:
+            sync: 'sync://'
+            async_amqp:
+                dsn: '%env(MESSENGER_TRANSPORT_AMQP_DSN)%'
+                options:
+                    exchange:
+                        name: tasks_messages
+                        type: topic
+            async_redis:
+                dsn: '%env(MESSENGER_TRANSPORT_REDIS_DSN)%'
+            failed: 'doctrine://default?queue_name=failed'
+
+        routing:
+            App\Application\Task\Event\TaskCreatedEvent: async_amqp
+            App\Application\Task\Event\TaskStatusUpdatedEvent: async_redis

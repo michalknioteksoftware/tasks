@@ -53,6 +53,25 @@ docker compose exec php bin/console doctrine:migrations:migrate --no-interaction
 └── docker-compose.yml
 ```
 
+## Messenger (AMQP & Redis)
+
+Task events (`TaskCreatedEvent`, `TaskStatusUpdatedEvent`) are dispatched via **Symfony Messenger** to async transports:
+
+- **TaskCreatedEvent** → `async_amqp` (RabbitMQ), port 5672 (AMQP), 15672 (management UI)
+- **TaskStatusUpdatedEvent** → `async_redis` (Redis), port 6379
+
+Run workers to consume messages (e.g. write task history):
+
+```bash
+# Consume AMQP (task created)
+docker compose exec php bin/console messenger:consume async_amqp -vv
+
+# Consume Redis (status updated)
+docker compose exec php bin/console messenger:consume async_redis -vv
+```
+
+In tests, transports are overridden to `sync://` so no brokers are required.
+
 ## Commands
 
 | Command | Description |
@@ -60,6 +79,8 @@ docker compose exec php bin/console doctrine:migrations:migrate --no-interaction
 | `docker compose up -d` | Start services |
 | `docker compose exec php bin/console cache:clear` | Clear cache |
 | `docker compose exec php bin/console doctrine:migrations:diff` | Generate migration |
+| `docker compose exec php bin/console messenger:consume async_amqp` | Consume AMQP messages |
+| `docker compose exec php bin/console messenger:consume async_redis` | Consume Redis messages |
 | `docker compose exec php bin/phpunit` | Run tests |
 
 ## Environment
