@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Users from API{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-3">Users from API</h1>
+        <p class="mb-3 text-muted">Fetched from <a href="https://jsonplaceholder.typicode.com/users" target="_blank" rel="noopener">JSONPlaceholder</a> and shown as domain users.</p>
+        <p class="mb-3">
+            <a href="{{ path('web_home') }}" class="btn btn-outline-secondary btn-sm">Back to home</a>
+        </p>
+
+        {% if users is empty %}
+            <p>No users to display.</p>
+        {% else %}
+            <ul class="list-group">
+                {% for user in users %}
+                    <li class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ user.name }}</h5>
+                            <small>#{{ user.id }}</small>
+                        </div>
+                        <p class="mb-1"><strong>Username:</strong> {{ user.username }} &middot; <strong>Email:</strong> {{ user.email }}</p>
+                        {% if user.phone %}
+                            <p class="mb-1"><strong>Phone:</strong> {{ user.phone }}</p>
+                        {% endif %}
+                        {% if user.website %}
+                            <p class="mb-1"><strong>Website:</strong> {{ user.website }}</p>
+                        {% endif %}
+                        {% if user.address %}
+                            <p class="mb-1">
+                                <strong>Address:</strong>
+                                {{ user.address.street }}{% if user.address.suite %}, {{ user.address.suite }}{% endif %}
+                                {{ user.address.city }}
+                                {% if user.address.zipcode %}({{ user.address.zipcode }}){% endif %}
+                            </p>
+                        {% endif %}
+                        {% if user.company %}
+                            <p class="mb-0">
+                                <strong>Company:</strong> {{ user.company.name }}
+                                {% if user.company.catchPhrase %} &ndash; {{ user.company.catchPhrase }}{% endif %}
+                            </p>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{% endblock %}

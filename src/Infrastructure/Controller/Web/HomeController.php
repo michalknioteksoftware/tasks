@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Web;
 
-use App\Application\DoctrineDomainFactory;
+use App\Application\DomainFactory;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -21,7 +21,7 @@ class HomeController extends AbstractWebController
     public function index(
         FormFactoryInterface $formFactory,
         AuthenticationUtils $authenticationUtils,
-        DoctrineDomainFactory $factory,
+        DomainFactory $factory,
         \Symfony\Component\Security\Csrf\CsrfTokenManagerInterface $csrfTokenManager,
     ): Response
     {

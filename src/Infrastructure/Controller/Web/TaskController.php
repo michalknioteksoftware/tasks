@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Web;
 
-use App\Application\DoctrineDomainFactory;
+use App\Application\DomainFactory;
 use App\Application\Task\CreateTaskCommandHandler;
 use App\Application\Task\ListCommandHandler;
 use App\Application\Task\ListHistoryCommandHandler;
@@ -25,7 +25,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class TaskController extends AbstractWebController
 {
     #[Route('/tasks', name: 'web_tasks', methods: ['GET'])]
-    public function index(Request $request, ListCommandHandler $handler, DoctrineDomainFactory $factory): Response
+    public function index(Request $request, ListCommandHandler $handler, DomainFactory $factory): Response
     {
         $user = $this->getDomainUser($factory);
 
@@ -45,7 +45,7 @@ class TaskController extends AbstractWebController
     }
 
     #[Route('/tasks/create', name: 'web_tasks_create', methods: ['GET', 'POST'])]
-    public function create(Request $request, CreateTaskCommandHandler $createHandler, DoctrineDomainFactory $factory): Response
+    public function create(Request $request, CreateTaskCommandHandler $createHandler, DomainFactory $factory): Response
     {
         $user = $this->getDomainUser($factory);
 
@@ -109,7 +109,7 @@ class TaskController extends AbstractWebController
         int $id,
         Request $request,
         UpdateTaskStatusCommandHandler $handler,
-        DoctrineDomainFactory $factory,
+        DomainFactory $factory,
     ): Response {
         $user = $this->getDomainUser($factory);
 
@@ -142,7 +142,7 @@ class TaskController extends AbstractWebController
         int $id,
         ListHistoryCommandHandler $handler,
         TaskRepository $taskRepository,
-        DoctrineDomainFactory $factory,
+        DomainFactory $factory,
     ): Response {
         $user = $this->getDomainUser($factory);
 
