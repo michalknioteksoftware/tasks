@@ -37,7 +37,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  * @psalm-type ArgumentsType = list<mixed>|array<string, mixed>
  * @psalm-type CallType = array<string, ArgumentsType>|array{0:string, 1?:ArgumentsType, 2?:bool}|array{method:string, arguments?:ArgumentsType, returns_clone?:bool}
  * @psalm-type TagsType = list<string|array<string, array<string, mixed>>> // arrays inside the list must have only one element, with the tag name as the key
- * @psalm-type CallbackType = string|array{0:string|ReferenceConfigurator,1:string}|\Closure|ReferenceConfigurator
+ * @psalm-type CallbackType = string|array{0:string|ReferenceConfigurator,1:string}|\Closure|ReferenceConfigurator|ExpressionConfigurator
  * @psalm-type DeprecationType = array{package: string, version: string, message?: string}
  * @psalm-type DefaultsType = array{
  *     public?: bool,
@@ -1292,6 +1292,83 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     }>,
  *     role_hierarchy?: array<string, string|list<scalar|Param|null>>,
  * }
+ * @psalm-type OverblogGraphqlConfig = array{
+ *     batching_method?: "relay"|"apollo"|Param, // Default: "relay"
+ *     definitions?: array{
+ *         argument_class?: scalar|Param|null, // Default: "Overblog\\GraphQLBundle\\Definition\\Argument"
+ *         default_field_resolver?: scalar|Param|null, // Default: "Overblog\\GraphQLBundle\\Resolver\\FieldResolver"
+ *         class_namespace?: scalar|Param|null, // Default: "Overblog\\GraphQLBundle\\__DEFINITIONS__"
+ *         cache_dir?: scalar|Param|null, // Default: null
+ *         cache_dir_permissions?: scalar|Param|null, // Default: null
+ *         use_classloader_listener?: bool|Param, // Default: true
+ *         auto_compile?: scalar|Param|null, // Default: true
+ *         show_debug_info?: bool|Param, // Show some performance stats in extensions // Default: false
+ *         config_validation?: bool|Param, // Default: true
+ *         schema?: array<string, array{ // Default: []
+ *             query?: scalar|Param|null, // Default: null
+ *             mutation?: scalar|Param|null, // Default: null
+ *             subscription?: scalar|Param|null, // Default: null
+ *             types?: list<scalar|Param|null>,
+ *         }>,
+ *         mappings?: array{
+ *             auto_discover?: bool|array{
+ *                 bundles?: bool|Param, // Default: false
+ *                 root_dir?: bool|Param, // Default: false
+ *                 built_in?: bool|Param, // Default: true
+ *             },
+ *             types?: list<array{ // Default: []
+ *                 types?: list<"yaml"|"graphql"|"annotation"|"attribute"|Param>,
+ *                 dir?: scalar|Param|null, // Default: null
+ *                 suffix?: scalar|Param|null, // Default: ".types"
+ *             }>,
+ *         },
+ *         builders?: array{
+ *             field?: list<array{ // Default: []
+ *                 alias?: scalar|Param|null,
+ *                 class?: scalar|Param|null,
+ *             }>,
+ *             fields?: list<array{ // Default: []
+ *                 alias?: scalar|Param|null,
+ *                 class?: scalar|Param|null,
+ *             }>,
+ *             args?: list<array{ // Default: []
+ *                 alias?: scalar|Param|null,
+ *                 class?: scalar|Param|null,
+ *             }>,
+ *         },
+ *     },
+ *     errors_handler?: bool|array{
+ *         enabled?: bool|Param, // Default: true
+ *         internal_error_message?: scalar|Param|null, // Default: "Internal server Error"
+ *         rethrow_internal_exceptions?: bool|Param, // Default: false
+ *         debug?: bool|Param, // Default: true
+ *         log?: bool|Param, // Default: true
+ *         logger_service?: scalar|Param|null, // Default: "logger"
+ *         map_exceptions_to_parent?: bool|Param, // Default: false
+ *         exceptions?: array{
+ *             warnings?: list<scalar|Param|null>,
+ *             errors?: list<scalar|Param|null>,
+ *         },
+ *     },
+ *     services?: array{
+ *         executor?: scalar|Param|null, // Default: "Overblog\\GraphQLBundle\\Executor\\Executor"
+ *         promise_adapter?: scalar|Param|null, // Default: "GraphQL\\Executor\\Promise\\Adapter\\SyncPromiseAdapter"
+ *         expression_language?: scalar|Param|null, // Default: "Overblog\\GraphQLBundle\\ExpressionLanguage\\ExpressionLanguage"
+ *         cache_expression_language_parser?: scalar|Param|null,
+ *     },
+ *     security?: array{
+ *         query_max_depth?: scalar|Param|null, // Disabled if equal to false. // Default: 0
+ *         query_max_complexity?: scalar|Param|null, // Disabled if equal to false. // Default: 0
+ *         enable_introspection?: bool|Param, // Default: true
+ *         handle_cors?: bool|Param, // Default: false
+ *     },
+ *     doctrine?: array{
+ *         types_mapping?: list<scalar|Param|null>,
+ *     },
+ *     profiler?: array{
+ *         query_match?: scalar|Param|null, // Default: null
+ *     },
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1301,6 +1378,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     doctrine?: DoctrineConfig,
  *     doctrine_migrations?: DoctrineMigrationsConfig,
  *     security?: SecurityConfig,
+ *     overblog_graphql?: OverblogGraphqlConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1311,6 +1389,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         doctrine_migrations?: DoctrineMigrationsConfig,
  *         maker?: MakerConfig,
  *         security?: SecurityConfig,
+ *         overblog_graphql?: OverblogGraphqlConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1321,6 +1400,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         doctrine?: DoctrineConfig,
  *         doctrine_migrations?: DoctrineMigrationsConfig,
  *         security?: SecurityConfig,
+ *         overblog_graphql?: OverblogGraphqlConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

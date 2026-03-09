@@ -25,4 +25,7 @@ security:
         target: web_home
 
   access_control:
+    - { path: ^/graphql, roles: ROLE_ADMIN }
+    - { path: ^/api/graphql, roles: ROLE_ADMIN }
+    - { path: ^/admin, roles: ROLE_ADMIN }
     - { path: ^/tasks, roles: ROLE_USER }

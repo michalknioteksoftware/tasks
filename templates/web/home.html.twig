@@ -17,6 +17,9 @@
             <p class="mb-2">You are logged in.</p>
             {% if is_admin %}
                 <p><strong>Admin:</strong> you have administrator privileges.</p>
+                <p class="mt-2">
+                    <a href="{{ path('web_admin_tasks') }}" class="btn btn-primary btn-sm">List all users' tasks</a>
+                </p>
             {% else %}
                 <p><strong>User:</strong> you are logged in as a regular user.</p>
             {% endif %}

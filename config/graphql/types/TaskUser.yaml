@@ -1,0 +1,13 @@
+TaskUser:
+  type: object
+  config:
+    name: TaskUser
+    fields:
+      id:
+        type: Int
+      name:
+        type: 'String!'
+      username:
+        type: 'String!'
+      email:
+        type: 'String!'

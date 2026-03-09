@@ -42,5 +42,20 @@ class TaskRepository extends ServiceEntityRepository
 
         return $results;
     }
+
+    /**
+     * @return Task[]
+     */
+    public function findAllOrderedByIdDesc(): array
+    {
+        /** @var Task[] $results */
+        $results = $this->createQueryBuilder('t')
+            ->leftJoin('t.assignedUser', 'u')
+            ->addOrderBy('t.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        return $results;
+    }
 }
 

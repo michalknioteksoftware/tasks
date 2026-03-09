@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}All tasks (Admin){% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-3">All users' tasks (Admin)</h1>
+        <p class="mb-3 text-muted">The same data is available via the admin-only GraphQL API (e.g. <code>POST /graphql</code> with query <code>{ allTasks { id name status assignedUser { name email } } }</code>).</p>
+        <p class="mb-3">
+            <a href="{{ path('web_home') }}" class="btn btn-outline-secondary btn-sm">Back to home</a>
+        </p>
+
+        {% if tasks is empty %}
+            <p>No tasks in the system.</p>
+        {% else %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Assigned user</th>
+                        <th scope="col">Created at</th>
+                        <th scope="col">Updated at</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                        <tr>
+                            <td>{{ task.id }}</td>
+                            <td>{{ task.name }}</td>
+                            <td>{{ task.status.value }}</td>
+                            <td>
+                                {% if task.assignedUser %}
+                                    {{ task.assignedUser.name }} ({{ task.assignedUser.email }})
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                            <td>{{ task.createdAt|date('Y-m-d H:i') }}</td>
+                            <td>{{ task.updatedAt|date('Y-m-d H:i') }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}

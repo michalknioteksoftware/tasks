@@ -1,0 +1,7 @@
+Query:
+  type: object
+  config:
+    name: Query
+    fields:
+      allTasks:
+        type: '[Task!]!'

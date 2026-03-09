@@ -12,3 +12,7 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Infrastructure\GraphQL\ResolverMap\AppResolverMap:
+        tags:
+            - { name: overblog_graphql.resolver_map, schema: default }
+
