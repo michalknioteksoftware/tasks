@@ -33,7 +33,8 @@ final class Version20250306100000 extends AbstractMigration
             company_catch_phrase VARCHAR(255) DEFAULT NULL,
             company_bs VARCHAR(255) DEFAULT NULL,
             is_admin BOOLEAN NOT NULL DEFAULT false,
-            password VARCHAR(255) NOT NULL
+            password VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
         )');
     }
 

@@ -27,6 +27,10 @@
                         <p class="mb-1"><strong>Name:</strong> {{ user.name }}</p>
                         <p class="mb-1"><strong>Username:</strong> {{ user.username }}</p>
                         <p class="mb-1"><strong>Email:</strong> {{ user.email }}</p>
+                        <p class="mb-1">
+                            <strong>Created at:</strong>
+                            {{ user.createdAt|date('Y-m-d H:i') }}
+                        </p>
                         {% if user.address %}
                             <p class="mb-1">
                                 <strong>Address:</strong>

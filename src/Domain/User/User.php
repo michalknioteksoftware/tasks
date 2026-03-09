@@ -16,6 +16,7 @@ final class User
         private readonly ?string $phone,
         private readonly ?string $website,
         private readonly bool $isAdmin,
+        private readonly \DateTimeImmutable $createdAt,
     ) {
     }
 
@@ -62,6 +63,11 @@ final class User
     public function isAdmin(): bool
     {
         return $this->isAdmin;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
     }
 }
 
