@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Web;
 use App\Application\DoctrineDomainFactory;
 use App\Application\Task\CreateTaskCommandHandler;
 use App\Application\Task\ListCommandHandler;
+use App\Application\Task\UpdateTaskStatusCommandHandler;
 use App\Domain\Task\TaskStatus;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -32,9 +33,12 @@ class TaskController extends AbstractWebController
 
         $tasks = $handler->handle($user);
 
+        $statusCases = TaskStatus::cases();
+
         return $this->render('web/tasks.html.twig', [
             'user' => $user,
             'tasks' => $tasks,
+            'statuses' => $statusCases,
         ]);
     }
 
@@ -96,6 +100,39 @@ class TaskController extends AbstractWebController
             'form' => $form->createView(),
             'user' => $user,
         ]);
+    }
+
+    #[Route('/tasks/{id}/status', name: 'web_tasks_update_status', methods: ['POST'])]
+    public function updateStatus(
+        int $id,
+        Request $request,
+        UpdateTaskStatusCommandHandler $handler,
+        DoctrineDomainFactory $factory,
+    ): Response {
+        $user = $this->getDomainUser($factory);
+
+        if (null === $user) {
+            return new RedirectResponse($this->generateUrl('web_home'));
+        }
+
+        $statusValue = (string) $request->request->get('status', '');
+
+        try {
+            $newStatus = TaskStatus::from($statusValue);
+        } catch (\ValueError) {
+            $this->addFlash('error', 'Invalid status value.');
+
+            return new RedirectResponse($this->generateUrl('web_tasks'));
+        }
+
+        try {
+            $handler->handle($id, $newStatus, $user);
+            $this->addFlash('success', 'Task status updated.');
+        } catch (\InvalidArgumentException $e) {
+            $this->addFlash('error', $e->getMessage());
+        }
+
+        return new RedirectResponse($this->generateUrl('web_tasks'));
     }
 }
 

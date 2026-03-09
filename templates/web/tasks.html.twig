@@ -21,6 +21,7 @@
                         <th scope="col">Status</th>
                         <th scope="col">Created at</th>
                         <th scope="col">Updated at</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,6 +32,16 @@
                             <td>{{ task.status.value }}</td>
                             <td>{{ task.createdAt|date('Y-m-d H:i') }}</td>
                             <td>{{ task.updatedAt|date('Y-m-d H:i') }}</td>
+                            <td>
+                                <form method="post" action="{{ path('web_tasks_update_status', {id: task.id}) }}">
+                                    <select name="status">
+                                        {% for status in statuses %}
+                                            <option value="{{ status.value }}" {% if status.value == task.status.value %}selected{% endif %}>{{ status.value }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit">Update</button>
+                                </form>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
