@@ -21,7 +21,8 @@
                         <th scope="col">Status</th>
                         <th scope="col">Created at</th>
                         <th scope="col">Updated at</th>
-                        <th scope="col">Actions</th>
+                        <th scope="col">History</th>
+                        <th scope="col">Status update</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,13 +34,16 @@
                             <td>{{ task.createdAt|date('Y-m-d H:i') }}</td>
                             <td>{{ task.updatedAt|date('Y-m-d H:i') }}</td>
                             <td>
-                                <form method="post" action="{{ path('web_tasks_update_status', {id: task.id}) }}">
+                                <a href="{{ path('web_tasks_history', {id: task.id}) }}" class="btn btn-secondary btn-sm">History</a>
+                            </td>
+                            <td>
+                                <form method="post" action="{{ path('web_tasks_update_status', {id: task.id}) }}" class="d-inline">
                                     <select name="status">
                                         {% for status in statuses %}
                                             <option value="{{ status.value }}" {% if status.value == task.status.value %}selected{% endif %}>{{ status.value }}</option>
                                         {% endfor %}
                                     </select>
-                                    <button type="submit">Update</button>
+                                    <button type="submit" class="btn btn-primary btn-sm">Update</button>
                                 </form>
                             </td>
                         </tr>

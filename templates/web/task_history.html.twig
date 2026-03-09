@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Task history – {{ task.name }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-3">History for task: {{ task.name }}</h1>
+
+        <p class="mb-3">
+            <a href="{{ path('web_tasks') }}" class="btn btn-secondary btn-sm">Back to tasks</a>
+        </p>
+
+        {% if history is empty %}
+            <p>No history recorded for this task yet.</p>
+        {% else %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Recorded at</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in history %}
+                        <tr>
+                            <td>{{ entry.name }}</td>
+                            <td>{{ entry.status.value }}</td>
+                            <td>{{ entry.createdAt|date('Y-m-d H:i') }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -7,7 +7,9 @@ namespace App\Infrastructure\Controller\Web;
 use App\Application\DoctrineDomainFactory;
 use App\Application\Task\CreateTaskCommandHandler;
 use App\Application\Task\ListCommandHandler;
+use App\Application\Task\ListHistoryCommandHandler;
 use App\Application\Task\UpdateTaskStatusCommandHandler;
+use App\Infrastructure\Doctrine\TaskRepository;
 use App\Domain\Task\TaskStatus;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -133,6 +135,43 @@ class TaskController extends AbstractWebController
         }
 
         return new RedirectResponse($this->generateUrl('web_tasks'));
+    }
+
+    #[Route('/tasks/{id}/history', name: 'web_tasks_history', methods: ['GET'])]
+    public function history(
+        int $id,
+        ListHistoryCommandHandler $handler,
+        TaskRepository $taskRepository,
+        DoctrineDomainFactory $factory,
+    ): Response {
+        $user = $this->getDomainUser($factory);
+
+        if (null === $user) {
+            return new RedirectResponse($this->generateUrl('web_home'));
+        }
+
+        $doctrineTask = $taskRepository->find($id);
+        if ($doctrineTask === null) {
+            $this->addFlash('error', 'Task not found.');
+
+            return new RedirectResponse($this->generateUrl('web_tasks'));
+        }
+
+        $assignedUser = $doctrineTask->getAssignedUser();
+        if ($assignedUser === null || $assignedUser->getId() !== $user->getId()) {
+            $this->addFlash('error', 'You are not allowed to view this task.');
+
+            return new RedirectResponse($this->generateUrl('web_tasks'));
+        }
+
+        $task = $factory->fromDoctrineTask($doctrineTask);
+        $history = $handler->handle($task, $user);
+
+        return $this->render('web/task_history.html.twig', [
+            'task' => $task,
+            'history' => $history,
+            'user' => $user,
+        ]);
     }
 }
 

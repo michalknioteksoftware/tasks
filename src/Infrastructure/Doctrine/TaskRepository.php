@@ -34,7 +34,8 @@ class TaskRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('t')
             ->leftJoin('t.assignedUser', 'u')
             ->andWhere('u.id = :userId')
-            ->setParameter('userId', $userId);
+            ->setParameter('userId', $userId)
+            ->orderBy('t.id', 'DESC');
 
         /** @var Task[] $results */
         $results = $qb->getQuery()->getResult();

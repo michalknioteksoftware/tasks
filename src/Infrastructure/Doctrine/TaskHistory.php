@@ -7,7 +7,7 @@ namespace App\Infrastructure\Doctrine;
 use App\Domain\Task\TaskStatus;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: TaskHistoryRepository::class)]
 #[ORM\Table(name: 'task_history')]
 class TaskHistory
 {
