@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Infrastructure\Doctrine;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -273,6 +276,19 @@ class User
         $this->createdAt = $createdAt;
 
         return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+    public function getRoles(): array
+    {
+        return $this->isAdmin ? ['ROLE_ADMIN', 'ROLE_USER'] : ['ROLE_USER'];
+    }
+    public function eraseCredentials(): void
+    {
+        // no-op (no plainPassword field)
     }
 }
 

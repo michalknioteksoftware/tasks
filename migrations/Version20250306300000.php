@@ -6,6 +6,7 @@ namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
 
 final class Version20250306300000 extends AbstractMigration
 {
@@ -18,16 +19,8 @@ final class Version20250306300000 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $salt = $_ENV['PASSWORD_SALT'] ?? getenv('PASSWORD_SALT');
-        if ($salt === false || $salt === '') {
-            throw new \RuntimeException('PASSWORD_SALT env variable must be set to run this migration.');
-        }
-
-        $algo = $_ENV['PASSWORD_ALGO'] ?? getenv('PASSWORD_ALGO');
-        if ($algo === false || $algo === '') {
-            throw new \RuntimeException('PASSWORD_ALGO env variable must be set to run this migration.');
-        }
-        $placeholderPassword = hash($algo, $salt . 'ChangeMe');
+        $hasher = new NativePasswordHasher();
+        $placeholderPassword = $hasher->hash('ChangeMe');
 
         $json = $this->fetchUsers();
         $data = json_decode($json, true);

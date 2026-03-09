@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Web;
 
+use App\Application\DoctrineDomainFactory;
 use App\Application\Task\ListCommandHandler;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class TaskController extends AbstractController
+class TaskController extends AbstractWebController
 {
     #[Route('/tasks', name: 'web_tasks', methods: ['GET'])]
-    public function index(Request $request, ListCommandHandler $handler): Response
+    public function index(Request $request, ListCommandHandler $handler, DoctrineDomainFactory $factory): Response
     {
-        $session = $request->getSession();
-        $user = $this->getDomainUserFromSession($session);
+        $user = $this->getDomainUser($factory);
 
         if (null === $user) {
             return new RedirectResponse($this->generateUrl('web_home'));
@@ -29,20 +28,6 @@ class TaskController extends AbstractController
             'user' => $user,
             'tasks' => $tasks,
         ]);
-    }
-
-    private function getDomainUserFromSession($session): ?DomainUser
-    {
-        $storedUser = $session->get('user');
-        if (!is_string($storedUser) || $storedUser === '') {
-            return null;
-        }
-
-        $unserialized = unserialize($storedUser, [
-            'allowed_classes' => true,
-        ]);
-
-        return $unserialized instanceof DomainUser ? $unserialized : null;
     }
 }
 

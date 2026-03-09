@@ -4,29 +4,34 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Web;
 
-use App\Domain\User\User as DomainUser;
 use App\Application\DoctrineDomainFactory;
-use App\Infrastructure\Doctrine\UserRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class HomeController extends AbstractController
+class HomeController extends AbstractWebController
 {
     #[Route('/', name: 'web_home', methods: ['GET', 'POST'])]
-    public function index(Request $request, UserRepository $userRepository, DoctrineDomainFactory $factory): Response
+    public function index(
+        FormFactoryInterface $formFactory,
+        AuthenticationUtils $authenticationUtils,
+        DoctrineDomainFactory $factory,
+        \Symfony\Component\Security\Csrf\CsrfTokenManagerInterface $csrfTokenManager,
+    ): Response
     {
-        $salt = (string) $this->getParameter('password_salt');
-        $algo = (string) $this->getParameter('password_algo');
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $lastUsername = $authenticationUtils->getLastUsername();
 
-        $form = $this->createFormBuilder()
+        $formBuilder = $formFactory->createNamedBuilder('login_form')
             ->add('identifier', TextType::class, [
-                'label' => 'Username or e-mail',
+                'label' => 'E-mail',
+                'data' => $lastUsername,
             ])
             ->add('password', PasswordType::class, [
                 'label' => 'Password',
@@ -34,40 +39,24 @@ class HomeController extends AbstractController
             ->add('login', SubmitType::class, [
                 'label' => 'Log in',
             ])
+            ->add('_csrf_token', HiddenType::class, [
+                'mapped' => false,
+                'data' => $csrfTokenManager->getToken('authenticate')->getValue(),
+            ]);
+
+        $form = $formBuilder
+            ->setMethod('POST')
+            ->setAction($this->generateUrl('web_home'))
             ->getForm();
 
-        $form->handleRequest($request);
+        $domainUser = $this->getDomainUser($factory);
 
-        $error = null;
-        $session = $request->getSession();
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $identifier = $data['identifier'] ?? '';
-            $password = $data['password'] ?? '';
-
-            $hashedPassword = hash($algo, $salt . $password);
-
-            $user = $userRepository->getUserByUserNameOrEmail($identifier);
-
-            if (null === $user || $user->getPassword() !== $hashedPassword) {
-                $error = 'Invalid credentials.';
-            } else {
-                $domainUser = $factory->fromDoctrineUser($user);
-                $session->set('user', serialize($domainUser));
-
-                return new RedirectResponse($this->generateUrl('web_home'));
-            }
-        }
-
-        $domainUser = $this->getDomainUserFromSession($session);
-
-        $isLoggedIn = $domainUser instanceof DomainUser;
+        $isLoggedIn = $domainUser !== null;
         $isAdmin = $domainUser?->isAdmin() ?? false;
 
         return $this->render('web/home.html.twig', [
             'login_form' => $form->createView(),
-            'login_error' => $error,
+            'login_error' => $error ? 'Invalid credentials' : null,
             'is_logged_in' => $isLoggedIn,
             'is_admin' => $isAdmin,
             'user' => $domainUser,
@@ -75,26 +64,9 @@ class HomeController extends AbstractController
     }
 
     #[Route('/logout', name: 'web_logout', methods: ['POST'])]
-    public function logout(Request $request): RedirectResponse
+    public function logout(): void
     {
-        $session = $request->getSession();
-        $session->remove('user');
-
-        return new RedirectResponse($this->generateUrl('web_home'));
-    }
-
-    private function getDomainUserFromSession($session): ?DomainUser
-    {
-        $storedUser = $session->get('user');
-        if (!is_string($storedUser) || $storedUser === '') {
-            return null;
-        }
-
-        $unserialized = unserialize($storedUser, [
-            'allowed_classes' => true,
-        ]);
-
-        return $unserialized instanceof DomainUser ? $unserialized : null;
+        throw new \LogicException('This method is intercepted by the Symfony security logout mechanism.');
     }
 }
 

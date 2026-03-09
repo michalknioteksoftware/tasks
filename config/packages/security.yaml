@@ -1,0 +1,28 @@
+security:
+  password_hashers:
+    App\Infrastructure\Doctrine\User: 'auto'
+
+  providers:
+    app_user_provider:
+      entity:
+        class: App\Infrastructure\Doctrine\User
+        property: email
+
+  firewalls:
+    main:
+      lazy: true
+      provider: app_user_provider
+      form_login:
+        login_path: web_home
+        check_path: web_home
+        username_parameter: login_form[identifier]
+        password_parameter: login_form[password]
+        enable_csrf: true
+        csrf_parameter: login_form[_csrf_token]
+        csrf_token_id: authenticate
+      logout:
+        path: web_logout
+        target: web_home
+
+  access_control:
+    - { path: ^/tasks, roles: ROLE_USER }

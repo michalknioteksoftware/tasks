@@ -1,11 +1,4 @@
-parameters:
-    # Override in production via PASSWORD_SALT env var
-    password_salt: '%env(default:app_password_salt:PASSWORD_SALT)%'
-    app_password_salt: 'xK9#mP2$vL7@nQ4!wR8&jF3'
-
-    # Override in production via PASSWORD_ALGO env var
-    password_algo: '%env(default:app_password_algo:PASSWORD_ALGO)%'
-    app_password_algo: 'sha256'
+parameters: {  }
 
 services:
     _defaults:
@@ -18,3 +11,4 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
