@@ -20,6 +20,7 @@ class HomeController extends AbstractController
     public function index(Request $request, UserRepository $userRepository): Response
     {
         $salt = (string) $this->getParameter('password_salt');
+        $algo = (string) $this->getParameter('password_algo');
 
         $form = $this->createFormBuilder()
             ->add('identifier', TextType::class, [
@@ -43,13 +44,9 @@ class HomeController extends AbstractController
             $identifier = $data['identifier'] ?? '';
             $password = $data['password'] ?? '';
 
-            $hashedPassword = hash('sha256', $salt . $password);
+            $hashedPassword = hash($algo, $salt . $password);
 
-            $user = $userRepository->createQueryBuilder('u')
-                ->where('u.username = :identifier OR u.email = :identifier')
-                ->setParameter('identifier', $identifier)
-                ->getQuery()
-                ->getOneOrNullResult();
+            $user = $userRepository->getUserByUserNameOrEmail($identifier);
 
             if (null === $user || $user->getPassword() !== $hashedPassword) {
                 $error = 'Invalid credentials.';
