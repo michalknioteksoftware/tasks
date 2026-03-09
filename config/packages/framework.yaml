@@ -13,6 +13,7 @@ framework:
         utf8: true
     serializer:
         enable_attributes: true
+    form: true
 
 when@test:
     framework:

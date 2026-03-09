@@ -1,12 +1,8 @@
-api:
-    resource:
-        path: ../src/Controller/Api/
-        namespace: App\Controller\Api
-    type: attribute
-    prefix: /api
+when@dev:
+    _web:
+        resource: 'routes/web.yaml'
+        type: glob
 
-web:
-    resource:
-        path: ../src/Controller/Web/
-        namespace: App\Controller\Web
-    type: attribute
+    _api:
+        resource: 'routes/api.yaml'
+        type: glob
