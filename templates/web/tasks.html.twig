@@ -6,6 +6,10 @@
     <div class="container">
         <h1 class="mb-3">Your tasks</h1>
 
+        <p class="mb-3">
+            <a href="{{ path('web_tasks_create') }}" class="btn btn-primary btn-sm">Create task</a>
+        </p>
+
         {% if tasks is empty %}
             <p>No tasks assigned to you yet.</p>
         {% else %}
