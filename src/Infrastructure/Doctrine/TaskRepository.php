@@ -25,5 +25,21 @@ class TaskRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    /**
+     * @return Task[]
+     */
+    public function findByAssignedUserId(int $userId): array
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->leftJoin('t.assignedUser', 'u')
+            ->andWhere('u.id = :userId')
+            ->setParameter('userId', $userId);
+
+        /** @var Task[] $results */
+        $results = $qb->getQuery()->getResult();
+
+        return $results;
+    }
 }
 
